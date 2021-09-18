@@ -1,0 +1,11 @@
+.common-card-style {
+  height: 100%;
+  margin: 16px;
+  padding: 16px 24px;
+  overflow: hidden;
+  color: #373e51;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 3px 6px 0 rgb(235, 239, 250);
+}
+  
