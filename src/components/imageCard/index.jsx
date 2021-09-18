@@ -8,7 +8,7 @@ const ImageCard = (props) => {
   const {
     data
   } = props;
-  const {copyright, date, explanation, url, title} = data;
+  const {copyright, date, explanation, url, title, media_type} = data;
   const [liked, setLiked] = useState(false);
 
   const copyCode = () => {
@@ -25,7 +25,8 @@ const ImageCard = (props) => {
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           <div style={{ textAlign: 'left' }}>
-            <img src={url} />
+            {media_type && media_type === 'image' ? <img src={url} /> : ''}
+            {media_type && media_type === 'video' ? <iframe src={url} allowfullscreen="true"/> : ''}
           </div>
           <div style={{ textAlign: 'left', flex: 1, margin: '30px' }}>
             <p style={{ fontSize: '48px', fontWeight: 'bold' }}>{title}</p>
