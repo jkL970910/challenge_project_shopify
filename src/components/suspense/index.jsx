@@ -32,7 +32,7 @@ const Suspense = (props) => {
           <div className={style.errorWrap} style={{ ...cssStyle }}>
             <Empty
               image={<MehOutlined style={{ fontSize: 30, color: '#acacac' }} />}
-              description="Fail to get the data"
+              description= {data.msg || "Fail to get the data"}
               imageStyle={{ height: 40 }}
             >
               {

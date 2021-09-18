@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import { Card, message } from 'antd';
 import './index.css';
-import { HeartOutlined } from '@ant-design/icons';
+import copy from 'copy-to-clipboard';
+import { HeartOutlined, ShareAltOutlined } from '@ant-design/icons';
 
 const ImageCard = (props) => {
   const {
@@ -9,6 +10,12 @@ const ImageCard = (props) => {
   } = props;
   const {copyright, date, explanation, url, title} = data;
   const [liked, setLiked] = useState(false);
+
+  const copyCode = () => {
+    if (copy(url, {
+      debug: true,
+    })) message.success(`The link of ${title} has copied successfully, send it to your friends!`)
+  }
 
   return (
     <div className={"imageCard"}>
@@ -23,7 +30,11 @@ const ImageCard = (props) => {
           <div style={{ textAlign: 'left', flex: 1, margin: '30px' }}>
             <p style={{ fontSize: '48px', fontWeight: 'bold' }}>{title}</p>
             <div>
-              <p style={{ fontSize: '24px', display:'inline-block' }}>Date: {date} | {copyright}</p>
+              <p style={{ fontSize: '24px', display:'inline-block' }}>Date: {date} | {copyright || 'Anonymous'}</p>
+              <ShareAltOutlined 
+                style={{ float: 'right', fontSize: '32px', marginLeft: '8px' }} 
+                onClick={copyCode}
+              />
               <HeartOutlined 
                 style={{ float: 'right', fontSize: '32px', color: liked ? 'red' : ''}} 
                 onClick={() => {setLiked(!liked); message.success(`You have ${!liked ? 'liked' : 'unliked'} the ${title}`)}}

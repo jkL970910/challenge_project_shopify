@@ -7,7 +7,7 @@ const DateRange = (props) => {
   const { defaultValue, onTimeRangeChange = () => {}, name = 'time' } = props;
 
   const initialValue = useMemo(() => {
-    return defaultValue || [dayjs().subtract(1, 'month'), dayjs()];
+    return defaultValue || [dayjs().subtract(1, 'week'), dayjs()];
   }, [defaultValue]);
 
   const formItem = useMemo(
@@ -16,7 +16,7 @@ const DateRange = (props) => {
         name,
         {},
         {
-          initialValue: defaultValue || [dayjs().subtract(1, 'month'), dayjs()],
+          initialValue: defaultValue || [dayjs().subtract(1, 'week'), dayjs()],
         },
       ),
     ],

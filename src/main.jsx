@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Row, Col, Button, Select } from 'antd';
+import { Row, Col, Button, Select, message } from 'antd';
 import axios from 'axios';
 import { NASAKEY, NASA_REQUEST_URL } from './constants';
 import StyleCard from './components/card/index';
@@ -31,13 +31,20 @@ class Main extends Component {
  
     fetchImages = () => {
         let type = '';
+        let url = NASA_REQUEST_URL;
         const {select_api, timeRange} = this.state;
-        if (select_api === 'APOD') type = '/planetary/apod?api_key=';
-        else if (select_api === 'EPIC') type = '/EPIC/api/natural/all?api_key=';
-        const url = NASA_REQUEST_URL + type + NASAKEY + `&start_date=${timeRange.time[0].format('YYYY-MM-DD')}&end_date=${timeRange.time[1].format('YYYY-MM-DD')}`;
+        if (select_api === 'APOD') {
+            type = '/planetary/apod?api_key=';
+            url = url + type + NASAKEY + `&start_date=${timeRange.time[0].format('YYYY-MM-DD')}&end_date=${timeRange.time[1].format('YYYY-MM-DD')}`;
+        } else {
+            message.error('more links will release soon');
+            return;
+        }
         this.setState({isLoading: true, initial: false})
         axios.get(url).then((res) => {
             this.setState({info: res.data, isLoading: false, error: res.status === 200 || res.status === 304 ? false : true})
+        }).catch(res => {
+            this.setState({info: res.response.data, isLoading: false, error: res.response.status === 200 || res.response.status === 304 ? false : true})
         })
     }
 
@@ -54,7 +61,7 @@ class Main extends Component {
         return (
             <Row gutter={8} className='main'>
                 <Col span={24}>
-                    <StyleCard title="Welcome! Please select a Image source" headStyle={{ fontSize: '46px'}} >
+                    <StyleCard title="Welcome! Please select an image source" headStyle={{ fontSize: '46px'}} >
                         <div style={{ display: 'flex',  justifyContent: 'center', marginBottom: '8px'}}>
                             <Select
                                 style={{ width: 300 }}
@@ -63,7 +70,7 @@ class Main extends Component {
                                 onChange={this.onSourceChange}
                             >
                                 <Select.Option value="APOD">Astronomy Picture of the Day</Select.Option>
-                                <Select.Option value="EPIC">Earth Polychromatic Imaging Camera</Select.Option>
+                                <Select.Option value="NeoWs">More Links Will Coming Soon</Select.Option>
                             </Select>
                             <DateRange onTimeRangeChange={this.onTimeRangeChange}/>
                             <Button style = {{ marginLeft: '16px'}} onClick={this.showNasaImages}>Search</Button>
