@@ -42,10 +42,40 @@ class Main extends Component {
         }
         this.setState({isLoading: true, initial: false})
         axios.get(url).then((res) => {
-            this.setState({info: res.data, isLoading: false, error: res.status === 200 || res.status === 304 ? false : true})
+            this.setState({info: this.updateDataList(res.data), isLoading: false, error: res.status === 200 || res.status === 304 ? false : true})
         }).catch(res => {
             this.setState({info: res.response.data, isLoading: false, error: res.response.status === 200 || res.response.status === 304 ? false : true})
         })
+    }
+
+    updateDataList = (data) => {
+        if (!localStorage.getItem('liked-list')) localStorage.setItem('liked-list', JSON.stringify(new Set()));
+        let likedList = this.objToSet(JSON.parse(localStorage.getItem('liked-list')));
+        data.forEach((o) => {
+          if (likedList.has(o.title)) {
+            o['liked'] = true;
+          }
+          else o['liked'] = false;
+        })
+        return data; 
+    }
+
+    objToSet = (obj) => {
+        let set = new Set();
+        for (let key in obj) {
+          set.add(obj[key]);
+        }
+        return set;
+    }
+
+    setLikedStatus = (data) => {
+        const {title, liked} = data;
+        let localArr = this.objToSet(JSON.parse(localStorage.getItem('liked-list')));
+        if (!liked) localArr.add(title);
+        else localArr.delete(title);
+        localStorage.setItem('liked-list', JSON.stringify({...[...localArr]}));
+        this.setState({info: this.updateDataList(this.state.info)})
+        message.success(`You have ${!liked ? 'liked' : 'unliked'} the ${title}`);
     }
 
     onSourceChange = (value) => {
@@ -87,7 +117,7 @@ class Main extends Component {
                             data={info}
                             onRetry={this.refresh}
                         >
-                            <ImagePanel data={info} api={select_api} />
+                            <ImagePanel data={info} api={select_api} setLikedStatus={this.setLikedStatus} />
                         </CorpSuspense>
                         }
                     </StyleCard>
