@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Row, Col, Button, Select, message } from 'antd';
+import { Row, Col, Button, Select, message, Popover } from 'antd';
 import axios from 'axios';
 import { NASAKEY, NASA_REQUEST_URL } from './constants';
 import StyleCard from './components/card/index';
@@ -18,6 +18,7 @@ class Main extends Component {
             initial: true,
             error: false,
             timeRange: undefined,
+            likedListInfo: undefined,
         };
     }
 
@@ -42,7 +43,7 @@ class Main extends Component {
         }
         this.setState({isLoading: true, initial: false})
         axios.get(url).then((res) => {
-            this.setState({info: this.updateDataList(res.data), isLoading: false, error: res.status === 200 || res.status === 304 ? false : true})
+            this.setState({info: this.updateDataList(res.data), likedListInfo: JSON.parse(localStorage.getItem('liked-list')), isLoading: false, error: res.status === 200 || res.status === 304 ? false : true})
         }).catch(res => {
             this.setState({info: res.response.data, isLoading: false, error: res.response.status === 200 || res.response.status === 304 ? false : true})
         })
@@ -74,7 +75,7 @@ class Main extends Component {
         if (!liked) localArr.add(title);
         else localArr.delete(title);
         localStorage.setItem('liked-list', JSON.stringify({...[...localArr]}));
-        this.setState({info: this.updateDataList(this.state.info)})
+        this.setState({info: this.updateDataList(this.state.info), likedListInfo: JSON.parse(localStorage.getItem('liked-list'))})
         message.success(`You have ${!liked ? 'liked' : 'unliked'} the ${title}`);
     }
 
@@ -87,7 +88,14 @@ class Main extends Component {
     };
 
     render() {
-        const { select_api, initial, isLoading, info, error } = this.state;
+        const { select_api, initial, isLoading, info, error, likedListInfo } = this.state;
+        const content = (
+            <div>
+                {likedListInfo && Object.keys(likedListInfo).map((o) => (
+                    <p className={'liked-panel'}>{likedListInfo[o]}</p>
+                ))}
+            </div>
+        );
         return (
             <Row gutter={8} className='main'>
                 <Col span={24}>
@@ -104,6 +112,11 @@ class Main extends Component {
                             </Select>
                             <DateRange onTimeRangeChange={this.onTimeRangeChange}/>
                             <Button style = {{ marginLeft: '16px'}} onClick={this.showNasaImages}>Search</Button>
+                            {initial || isLoading ? '' :
+                                <Popover content={content} title={`You like ${likedListInfo && Object.keys(likedListInfo).length} images`}>
+                                    <Button style={{ marginLeft: '16px' }} type="primary">Your Liked List</Button>
+                                </Popover>
+                            }
                         </div>
                     </StyleCard>
                 </Col>
