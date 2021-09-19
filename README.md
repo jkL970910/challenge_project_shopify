@@ -1,4 +1,4 @@
-Tech skills: React frame + javascript + Antd Components
+Tech skills: React frame + javascript + Antd Components  
 Deploy url: https://jkl970910.github.io/challenge_project_shopify/
 
 Implemented feature:
