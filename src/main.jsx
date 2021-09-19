@@ -54,7 +54,7 @@ class Main extends Component {
 
     onTimeRangeChange = (o) => {
         this.setState((prevState) => ({ timeRange: {...prevState.timeRange, ...o} }));
-      };
+    };
 
     render() {
         const { select_api, initial, isLoading, info, error } = this.state;

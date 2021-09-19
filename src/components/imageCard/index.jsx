@@ -3,19 +3,33 @@ import { Card, message } from 'antd';
 import './index.css';
 import copy from 'copy-to-clipboard';
 import { HeartOutlined, ShareAltOutlined } from '@ant-design/icons';
+import { useEffect } from 'react/cjs/react.development';
 
 const ImageCard = (props) => {
   const {
     data
   } = props;
-  const {copyright, date, explanation, url, title, media_type} = data;
-  const [liked, setLiked] = useState(false);
+  const {copyright, date, explanation, url, title, media_type, liked} = data;
+  const [curLiked, setCurLiked] = useState(liked);
+  
+  useEffect(() => {
+    setCurLiked(liked);
+  }, [data]);
+
+  const setLikedStatus = () => {
+    setCurLiked(!curLiked); 
+    let localArr = JSON.parse(localStorage.getItem('liked-list'));
+    if (!curLiked) localArr.push(title);
+    else localArr.splice(localArr.indexOf(title), 1);
+    localStorage.setItem('liked-list', JSON.stringify(localArr));
+    message.success(`You have ${!curLiked ? 'liked' : 'unliked'} the ${title}`);
+  }
 
   const copyCode = () => {
     if (copy(url, {
       debug: true,
-    })) message.success(`The link of ${title} has copied successfully, send it to your friends!`)
-  }
+    })) message.success(`The link of ${title} has copied successfully, send it to your friends!`);
+  };
 
   return (
     <div className={"imageCard"}>
@@ -37,8 +51,8 @@ const ImageCard = (props) => {
                 onClick={copyCode}
               />
               <HeartOutlined 
-                style={{ float: 'right', fontSize: '32px', color: liked ? 'red' : ''}} 
-                onClick={() => {setLiked(!liked); message.success(`You have ${!liked ? 'liked' : 'unliked'} the ${title}`)}}
+                style={{ float: 'right', fontSize: '32px', color: curLiked ? 'red' : ''}} 
+                onClick={setLikedStatus}
               />
             </div>
             <p style={{ fontSize: '30px' }}>{explanation}</p>

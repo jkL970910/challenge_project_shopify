@@ -29,10 +29,6 @@ const ChartFilter = (props) => {
     }
   };
 
-  const onReset = () => {
-    form.resetFields();
-  };
-
   return (
     <>
       <Form
